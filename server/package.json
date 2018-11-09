@@ -10,7 +10,8 @@
     "express": "^4.16.4",
     "graphql": "^14.0.2",
     "mime-types": "^2.1.21",
-    "mongoose": "^5.3.8"
+    "mongoose": "^5.3.8",
+    "textract": "^2.4.0"
   },
   "devDependencies": {},
   "scripts": {

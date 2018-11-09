@@ -7,6 +7,7 @@ import client from '../../apollo';
 import { cookieControl } from '../../swissKnife';
 import loadingBG from '../__forall__/placeholder.gif';
 import { convertTime } from '../../swissKnife';
+import { apiPath } from '../../apiPath';
 
 import ErrorWindow from '../__forall__/error';
 
@@ -796,7 +797,16 @@ class DisplayFilesFile extends Component {
                     }
                 </div>
                 <div className="rn-home-display-filesin-file-control">
-                    <button className="rn-home-display-filesin-file-control-delete definp" onClick={ this.props.onDelete }>
+                    <a
+                        href={ apiPath + this.props.url }
+                        className="rn-home-display-filesin-file-control-btn delete definp"
+                        download>
+                        <i className="fas fa-download" />
+                    </a>
+                    <button className="rn-home-display-filesin-file-control-btn open definp" onClick={ this.props.onOpen }>
+                        <i className="fas fa-box-open" />
+                    </button>
+                    <button className="rn-home-display-filesin-file-control-btn delete definp" onClick={ this.props.onDelete }>
                         <i className="fas fa-trash" />
                     </button>
                 </div>
@@ -810,21 +820,22 @@ class DisplayFiles extends Component {
         return(
             <div className="rn-home-display-filesin">
                 {
-                    (this.props.isReceivingFile && !this.props.isFailReceived) ? (
+                    (this.props.isReceivingFile && !this.props.isErr) ? (
                         <DisplayArchivePlaceholder
                             off={ true }
                         />
                     ) : null
                 }
                 {
-                    (this.props.isFailReceived) ? (
+                    (this.props.isErr) ? (
                         <DisplayArchivePlaceholderErr
                             onClose={ this.props.onErrorClose }
+                            content={ this.props.isErr }
                         />
                     ) : null
                 }
                 {
-                    this.props.data.map((session) => (
+                    this.props.data.map(session => (
                         <DisplayFilesFile
                             key={ session.id }
                             {...session}
@@ -832,6 +843,7 @@ class DisplayFiles extends Component {
                             onDelete={ () => this.props.onDeleteFile(session.id) }
                             isSelected={ this.props.selectedFiles.includes(session.id) }
                             onSelect={ () => this.props.onFileSelect(session.id) }
+                            onOpen={ () => this.props.onFileOpen(session.url) }
                         />       
                     ))
                 }
@@ -867,7 +879,7 @@ class DisplayArchivePlaceholderErr extends Component {
                 </div>
                 <div className="rn-home-display-filesin-errplc-info">
                     <h4>Error</h4>
-                    <p>An error occurred while uploading a new file</p>
+                    <p>{ this.props.content }</p>
                 </div>
                 <button className="rn-home-display-filesin-errplc-close definp" onClick={ this.props.onClose }>
                     <i className="fas fa-times" />
@@ -946,6 +958,11 @@ class Display extends Component {
         return(
             <div className="rn-home-display rn-home-screen">
                 <div className="rn-home-display-title">
+                    {
+                        (!this.props.fileUploading) ? null : (
+                            <p className="rn-home-display-title-alertion">New file in progress. Please, don't close the application.</p>
+                        )
+                    }
                     <div className="rn-home-display-title-mat">
                         <h1
                             suppressContentEditableWarning={ true }
@@ -1039,12 +1056,13 @@ class Display extends Component {
                                 <DisplayFiles
                                     data={ this.props.data.files }
                                     isReceivingFile={ this.props.fileUploading }
-                                    isFailReceived={ this.props.fileUploadErr }
+                                    isErr={ this.props.fileError }
                                     onErrorClose={ this.props.onFilesErrClose }
                                     onSubmitFileName={ this.props.onSubmitFileName }
                                     onDeleteFile={ this.props.onDeleteFile }
                                     onFileSelect={ this.props.onFileSelect }
                                     selectedFiles={ this.props.selectedFiles }
+                                    onFileOpen={ this.props.onFileOpen }
                                 />
                             ) : (
                                 <div className="rn-home-display-filesin">
@@ -1267,6 +1285,104 @@ class Texteditor extends Component {
     }
 }
 
+class Demonstration extends Component {
+    constructor(props) {
+        super(props)
+        
+        this.state = {
+            type: "NOT_LOADED",
+            content: ""
+        }
+    }
+
+    componentWillUpdate(a) {
+        let b = this.props.data;
+        if((!b && a.data && a.data.content) || (b && a.data && a.data.content && b.url !== a.data.url)) { // display: text
+            this.setState(() => ({
+                type: "TEXT_DATA",
+                content: a.data.content
+            }));
+        } else if((!b && a.data && a.data.url && !a.data.content) || (b && a.data && !a.data.content && a.data.url && a.data.url !== b.url)) { // XXX
+            // Try to get image
+            let image = document.createElement("img");
+            image.src = apiPath + a.data.url;
+            image.onload = () => {
+                this.setState(() => ({
+                    type: "IMAGE_DATA",
+                    content: image.src
+                }));
+            } // display: image file
+            image.onerror = () => this.setState(() => ({
+                type: "ERROR_TYPE"
+            })); // !call error: this file cannot be readed
+        }
+    }
+
+    getContent = () => {
+        if(this.props.isLoading) {
+            return(
+                <div className={ `rn-home-demonstration${ (!this.props.active) ? "" : " view" }` }>
+                    <div className="rn-home-demonstration-alertion-loader" />
+                </div>
+            );
+        } else { // loaded
+            let a = "";
+            switch(this.state.type) {
+                case 'NOT_LOADED':
+                    a = (
+                        <div className={ `rn-home-demonstration${ (!this.props.active) ? "" : " view" }` }>
+                            <p className="rn-home-demonstration-alertion">We didn't receive information about your file.</p>
+                        </div>
+                    );
+                break;
+                case 'TEXT_DATA':
+                    a = (
+                        <div className={ `rn-home-demonstration text${ (!this.props.active) ? "" : " view" }` }>
+                            <p className="rn-home-demonstration-text" ref={ref =>{
+                                if(!ref) return null;
+                                ref.innerHTML = this.state.content.replace(/\n/g, "<div />");
+                            }} />
+                        </div>
+                    );
+                break;
+                case 'IMAGE_DATA':
+                    a = (
+                        <div className={ `rn-home-demonstration${ (!this.props.active) ? "" : " view" }` }>
+                            <img
+                                className="rn-home-demonstration-image"
+                                src={ this.state.content } 
+                                alt="user file"
+                            />
+                        </div>
+                    );
+                break;
+                case 'ERROR_TYPE':
+                default:
+                    a = (
+                        <div className={ `rn-home-demonstration${ (!this.props.active) ? "" : " view" }` }>
+                            <p className="rn-home-demonstration-alertion">So... I think that we don't support this type of files.</p>
+                        </div>
+                    );
+                break;
+            }
+
+            return a;
+        }
+    }
+
+    render() {
+        return(
+            <React.Fragment>
+                <div
+                    className={ `rn-home-demonstrationbg${ (!this.props.active) ? "" : " view" }` }
+                    onClick={ this.props.onClose }
+                />
+                { this.getContent() }
+            </React.Fragment>
+        );
+    }
+}
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -1277,9 +1393,11 @@ class App extends Component {
             topics: false,
             project: null,
             noteEditor: false,
+            demonstrationView: false,
+            demonstrationData: null,
             noteEditorData: null,
             fileUploading: false,
-            fileUploadErr: false,
+            fileError: false,
             selectedTasks: [],
             selectedNotes: [],
             selectedFiles: [],
@@ -2096,7 +2214,8 @@ class App extends Component {
                                     id,
                                     format,
                                     label,
-                                    name
+                                    name,
+                                    url
                                } 
                             }
                         }
@@ -2417,14 +2536,14 @@ class App extends Component {
         if(!file) return;
 
         let rQa = pl => {
-            this.setState(({ fileUploadErr: a }) => ({
+            this.setState(() => ({
                 fileUploading: pl
             }));
         }
 
         rQa(true);
         this.setState(() => ({
-            fileUploadErr: false
+            fileError: "An error occurred while uploading a new file"
         }));
 
         let { id, authToken } = cookieControl.get("userdata");
@@ -2435,7 +2554,8 @@ class App extends Component {
                         id,
                         format,
                         label,
-                        name
+                        name,
+                        url
                     }
                 }
             `,
@@ -2446,7 +2566,7 @@ class App extends Component {
         }).then(({ data: { createFile: file } }) => {
             rQa(false);
             if(!file) return this.setState(() => ({
-                fileUploadErr: true
+                fileError: true
             }));
 
             if(!this.state.project.files) return null;
@@ -2460,7 +2580,7 @@ class App extends Component {
                     filesInt: filesInt + 1
                 }
             }));
-        }).catch(() => this.setState({ fileUploadErr: true })); // alertError? fileErr!
+        }).catch(() => this.setState({ fileError: true })); // alertError? fileErr!
     }
 
     submitFileName = (name, targetID) => {
@@ -2528,6 +2648,57 @@ class App extends Component {
         }
     }
 
+    openFile = url => {
+        // Ok, this can be realized using XMLHttpRequest, but it's still not support docx and pdf and it's imposible to validate creator.
+        // However, It's faster than API-Read.
+        // -Changable -> API-Read
+
+        this.setState(() => ({
+            demonstrationView: true,
+            demonstrationData: false
+        }));
+
+        // have special files support, but slower
+        let { id, authToken } = cookieControl.get("userdata");
+        client.query({
+            query: gql`
+                query($id: ID!, $authToken: String!, $url: String!) {
+                    readTextFile(id: $id, authToken: $authToken, url: $url)
+                }
+            `,
+            variables: {
+                id, authToken,
+                url
+            }
+        }).then(({ data: { readTextFile: text } }) => {
+            if(!text) return this.setState(() => ({
+                fileError: "We cannot open this file. Please, try later."
+            }));
+
+            this.setState(() => ({
+                demonstrationData: {
+                    url,
+                    content: (text.indexOf("�") === -1) ? text : ""
+                }
+            }))
+        }).catch(() => this.alertError());
+
+        // have not special files support, but faster
+        // var a = new XMLHttpRequest();
+        // a.open('GET', apiPath + url, true);
+        // a.send(null);
+        // a.onreadystatechange = function () {
+        //     if(a.readyState === 4 && a.status === 200) {
+        //         this.setState(() => ({
+        //             demonstrationData: {
+        //                 url,
+        //                 content: a.responseText
+        //             }
+        //         }));
+        //     }
+        // }
+    }
+
     render() {
         if(this.state.criticalError) return <ErrorWindow />
 
@@ -2578,18 +2749,25 @@ class App extends Component {
                     onCreateNote={ this.createNote }
                     notesInQuery={ this.state.notesInQuery }
                     fileUploading={ this.state.fileUploading }
-                    fileUploadErr={ this.state.fileUploadErr }
+                    fileError={ this.state.fileError }
                     onUploadFile={ this.uploadFile }
-                    onFilesErrClose={ () => this.setState({ fileUploadErr: false, fileUploading: false }) }
+                    onFilesErrClose={ () => this.setState({ fileError: false, fileUploading: false }) }
                     onSubmitFileName={ this.submitFileName }
                     onDeleteFile={ this.deleteFile }
                     selectedFiles={ this.state.selectedFiles }
                     onFileSelect={ this.selectFile }
+                    onFileOpen={ this.openFile }
                 />
                 <Texteditor
                     active={ this.state.noteEditor }
                     data={ this.state.noteEditorData }
                     _onSubmit={ this.updateNote }
+                />
+                <Demonstration
+                    active={ this.state.demonstrationView }
+                    data={ this.state.demonstrationData }
+                    isLoading={ this.state.demonstrationData === false }
+                    onClose={ () => this.setState({ demonstrationView: false, demonstrationData: null }) }
                 />
             </div>
         );

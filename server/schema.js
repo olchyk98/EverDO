@@ -11,6 +11,7 @@ const {
 const { GraphQLUpload } = require('apollo-server');
 
 const fileSystem = require('fs');
+const textReader = require('textract');
 
 const settings = require('./settings');
 
@@ -407,6 +408,38 @@ const RootQuery = new GraphQLObjectType({
                     _id: targetID,
                     creatorID: user._id
                 });
+            }
+        },
+        readTextFile: {
+            type: GraphQLString,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLID) },
+                authToken: { type: new GraphQLNonNull(GraphQLString) },
+                url: { type: new GraphQLNonNull(GraphQLString) }
+            },
+            async resolve(_, { id, authToken, url }) {
+                // ? Comment validation lines, if you don't need owner validation
+                // Validate account
+                let user = await validateAccount(id, authToken);
+                if(!user) return null;
+
+                // Validate file
+                let file = await File.findOne({ url });
+                if(!file || str(file.creatorID) !== str(user._id)) return null;
+
+                url = '.'+url;
+                let data = "";
+
+                data = await (new Promise((resolve, reject) => { // basic es6 promise
+                    if(fileSystem.existsSync(url)) {
+                        fileSystem.readFile(url, 'utf8', (__, text) => resolve(text));
+                        // textReader.fromFileWithPath(url, (__, text) => resolve(text));
+                    } else {
+                        reject("File is not exists!");
+                    }
+                }));
+
+                return data;
             }
         }
     }
