@@ -1388,7 +1388,12 @@ class Demonstration extends Component {
             <React.Fragment>
                 <div
                     className={ `rn-home-demonstrationbg${ (!this.props.active) ? "" : " view" }` }
-                    onClick={ this.props.onClose }
+                    onClick={() => {
+                        this.setState(() => ({
+                            type: "NOT_LOADED",
+                            content: ""
+                        }), this.props.onClose);
+                    }}
                 />
                 { this.getContent() }
             </React.Fragment>
@@ -1867,7 +1872,8 @@ class App extends Component {
         a.splice(a.findIndex( ({ id }) => id === targetID ), 1);
 
         this.setState(() => ({
-            topics: a
+            topics: a,
+            project: null
         }));
 
         let { id, authToken } = cookieControl.get("userdata");
@@ -1885,7 +1891,7 @@ class App extends Component {
             if(!data) {
                 return this.alertError();
             }
-        }).catch(() => this.alertError());
+        }).catch(console.log); // () => this.alertError()
     }
 
     createTopic = () => {
@@ -2556,7 +2562,7 @@ class App extends Component {
 
         rQa(true);
         this.setState(() => ({
-            fileError: "An error occurred while uploading a new file"
+            fileError: false
         }));
 
         let { id, authToken } = cookieControl.get("userdata");
@@ -2579,7 +2585,7 @@ class App extends Component {
         }).then(({ data: { createFile: file } }) => {
             rQa(false);
             if(!file) return this.setState(() => ({
-                fileError: true
+                fileError: "An error occurred while uploading a new file"
             }));
 
             if(!this.state.project.files) return null;

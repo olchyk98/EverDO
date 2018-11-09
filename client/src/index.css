@@ -149,5 +149,6 @@ html, body {
 
 .rn {
   width:calc(100% - var(--navwidth));
+  max-width:calc(100% - var(--navwidth));
   position:relative;
 }

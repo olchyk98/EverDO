@@ -6,6 +6,10 @@ const links = {
     "REGISTER_PAGE": {
         absolute: "/register",
         router: "/register"
+    },
+    "SETTINGS_PAGE": {
+        absolute: "/settings",
+        router: "/settings"
     }
 }
 

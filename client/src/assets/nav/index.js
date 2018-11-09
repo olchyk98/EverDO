@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './main.css';
 
 import { gql } from 'apollo-boost';
+import { Link } from 'react-router-dom';
 
 import { cookieControl } from '../../swissKnife';
 import placeholder from '../__forall__/placeholder.gif';
@@ -11,10 +12,12 @@ import links from '../../links';
 
 class Button extends Component {
     render() {
+        if(!this.props.url) return null;
+
         return(
-            <button className={ `mo-nav-menu-btn definp${ (!this.props.active) ? "" : " active" }` }>
+            <Link to={ this.props.url } className={ `mo-nav-menu-btn definp${ (!this.props.active) ? "" : " active" }` }>
                 { this.props.icon }
-            </button>
+            </Link>
         );
     }
 }
@@ -68,7 +71,8 @@ class App extends Component {
                                 icon: <i className="fas fa-trash" />
                             },
                             {
-                                icon: <i className="fas fa-cog" />
+                                icon: <i className="fas fa-cog" />,
+                                url: links["SETTINGS_PAGE"].absolute
                             },
                             {
                                 icon: <i className="fas fa-door-closed" />
@@ -77,6 +81,7 @@ class App extends Component {
                             <Button
                                 key={ index }
                                 icon={ icon }
+                                url={ url }
                                 active={ "/"+window.location.pathname.split("/")[1] === url }
                             />
                         ))

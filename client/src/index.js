@@ -11,6 +11,7 @@ import client from './apollo';
 import Nav from './assets/nav';
 import Register from './assets/register';
 import Home from './assets/home';
+import Settings from './assets/settings';
 
 import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
 import { Route } from 'react-router';
@@ -44,13 +45,20 @@ ReactDOM.render((
                         exact
                     />
                     <NeedleRoute
+                        path={ links["SETTINGS_PAGE"].router }
+                        condition={ cookieControl.get("userdata") }
+                        component={ Settings }
+                        redirect={ links["REGISTER_PAGE"].router }
+                        exact
+                    />
+                    <NeedleRoute
                         path={ links["REGISTER_PAGE"].router }
                         condition={ !cookieControl.get("userdata") }
                         component={ Register }
                         redirect={ links["HOME_PAGE"].router }
                         exact
                     />
-                    <Redirect from="/" to={
+                    <Redirect exact to={
                         (cookieControl.get("userdata")) ? (
                             links["HOME_PAGE"].router
                         ) : (

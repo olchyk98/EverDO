@@ -129,7 +129,7 @@ const ProjectType = new GraphQLObjectType({
             resolve: ({ id }) => Notebook.count({ projectID: id })
         },
         filesInt: {
-            type: GraphQLID,
+            type: GraphQLInt,
             resolve: ({ id }) => File.count({ projectID: id })
         },
         creator: {
@@ -927,35 +927,29 @@ const RootMutation = new GraphQLObjectType({
                 if(!user) return false;
 
                 // Delete topic
-                let topic = Topic.findOneAndDelete({
+                let topic = await Topic.findOneAndDelete({
                     _id: targetID,
                     creatorID: user._id
                 });
 
                 if(!topic) return false;
 
-                await Task.deleteMany({
-                    topicID: targetID
-                });
+                let filter = { topicID: targetID }
 
-                await Todo.deleteMany({
-                    topicID: targetID
-                });
+                await Task.deleteMany(filter);
 
-                await Note.deleteMany({
-                    projectID: targetID
-                });
+                await Todo.deleteMany(filter);
 
-                await Notebook.deleteMany({
-                    projectID: targetID
-                });
+                await Note.deleteMany(filter);
 
-                await Project.deleteMany({
-                    topicID: targetID
-                });
+                await Notebook.deleteMany(filter);
 
-                await File.deleteMany({
-                    projectID: targetID
+                await Project.deleteMany(filter);
+
+                let files = await File.find(filter);
+                await File.deleteMany(filter);
+                files.forEach(async ({ url }) => {
+                    await fileSystem.unlinkSync('.' + url);
                 });
 
                 return true;
