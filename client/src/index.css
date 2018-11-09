@@ -84,6 +84,12 @@ html, body {
   }
 }
 
+.driftanimation {
+  opacity:0;
+  animation:drift-init-am .25s;
+  animation-fill-mode:forwards;
+}
+
 @keyframes drift-init-am {
   from {
       opacity:0;
@@ -117,6 +123,23 @@ html, body {
   }
   100% {
     transform:translateY(0px);
+  }
+}
+
+.zoominitam {
+  opacity:0;
+  animation:zoominitam .25s;
+  animation-fill-mode:forwards;
+}
+
+@keyframes zoominitam {
+  from {
+      transform:scale(0) rotate(-45deg);
+      opacity:0;
+  }
+  to {
+      transform:scale(1) rotate(0deg);
+      opacity:1;
   }
 }
 

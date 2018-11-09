@@ -968,7 +968,7 @@
     color:transparent;
     margin-left:var(--margin);
     margin-right:var(--margin);
-    transition:.1s;
+    transition:.5s;
 }
 
 .rn-home-display-marks-mat-btn:active {

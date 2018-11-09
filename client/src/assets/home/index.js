@@ -427,7 +427,11 @@ class DisplayTodoTask extends Component {
 
     render() {
         return(
-            <div className={ `rn-home-display-mat-topic-task counteranimation${ (!this.props.isSelected) ? "" : " active" }${ (!this.getSource("isDone")) ? "" : " done" }` }>
+            <div
+                className={ `rn-home-display-mat-topic-task driftanimation counteranimation${ (!this.props.isSelected) ? "" : " active" }${ (!this.getSource("isDone")) ? "" : " done" }` }
+                style={{
+                    animationDelay: this.props.initAmDelay
+                }}>
                 <div className="rn-home-display-mat-topic-task-display">
                     <div className="rn-home-display-mat-topic-task-display-mat">
                         <i className="fas fa-check" />
@@ -526,7 +530,7 @@ class DisplayTodo extends Component {
                         )
                     }
                     {
-                        this.props.tasks.map(({ id, name, isDone, labels, time }) => (
+                        this.props.tasks.map(({ id, name, isDone, labels, time }, index) => (
                             <DisplayTodoTask
                                 key={ id }
                                 id={ id }
@@ -534,6 +538,7 @@ class DisplayTodo extends Component {
                                 isDone={ isDone }
                                 labels={ labels }
                                 time={ time }
+                                initAmDelay={ index * .25 }
                                 isSelected={ this.props.selectedTasks.includes(id) }
                                 onSelect={ () => this.props.onSelectTask(id) }
                                 onDelete={ () => this.props.onDeleteTask(this.props.id, id) }
@@ -556,7 +561,7 @@ class DisplayMark extends Component {
         return(
             <button
                 style={ this.props.styles }
-                className="definp rn-home-display-marks-mat-btn"
+                className="definp rn-home-display-marks-mat-btn zoominitam"
                 onClick={ this.props.onAction }>
                 { this.props.icon }
             </button>
@@ -763,7 +768,11 @@ class DisplayFilesFile extends Component {
 
     render() {
         return(
-            <div className={ `rn-home-display-filesin-file counteranimation${ (!this.props.isSelected) ? "" : " selected"  }` }>
+            <div
+                className={ `rn-home-display-filesin-file driftanimation counteranimation${ (!this.props.isSelected) ? "" : " selected"  }` }
+                style={{
+                    animationDelay: this.props.initAmDelay
+                }}>
                 <div className="rn-home-display-filesin-file-selector"
                     onClick={ this.props.onSelect }
                 />
@@ -835,10 +844,11 @@ class DisplayFiles extends Component {
                     ) : null
                 }
                 {
-                    this.props.data.map(session => (
+                    this.props.data.map((session, index) => (
                         <DisplayFilesFile
                             key={ session.id }
                             {...session}
+                            initAmDelay={ index * .1 + "s" }
                             onSubmitName={ value => this.props.onSubmitFileName(value, session.id) }
                             onDelete={ () => this.props.onDeleteFile(session.id) }
                             isSelected={ this.props.selectedFiles.includes(session.id) }
@@ -1119,7 +1129,10 @@ class Display extends Component {
                             ].map(({ styles, icon, name }, index) => (
                                 <DisplayMark
                                     key={ index }
-                                    styles={ styles }
+                                    styles={{
+                                        ...styles,
+                                        animationDelay: index * .25 + "s",
+                                    }}
                                     icon={ icon }
                                     onAction={ () => this.props.submitLabelAction(name) }
                                 />
