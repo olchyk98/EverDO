@@ -1,0 +1,27 @@
+.io-glcrerr {
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:999999;
+    height:100vh;
+    width:100vw;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.io-glcrerr-title {
+    font-size:1.5em;
+    font-family:"Roboto";
+    font-weight:600;
+    margin:0;
+    text-transform:uppercase
+}
+
+.io-glcrerr-logout {
+    font-size:.85em;
+    color:rgba(0, 0, 0, .85);
+    cursor:pointer;
+}

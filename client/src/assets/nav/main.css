@@ -1,0 +1,67 @@
+.mo-nav {
+    --padding:15px;
+    --color:#0382ff;
+
+    background:var(--color);
+    height:calc(100vh - var(--padding) * 2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    padding-top:var(--padding);
+    padding-bottom:var(--padding);
+    z-index:999;
+    box-shadow:1px 0px 15px -2.5px var(--color);
+}
+
+.mo-nav-section {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.mo-nav-menu-logo {
+    font-size:1.5em;
+    color:rebeccapurple;
+    margin-bottom:5px;
+}
+
+.mo-nav-menu-btn {
+    --margin:17.5px;
+
+    margin-top:var(--margin);
+    margin-bottom:var(--margin);
+    font-size:1.1em;
+    cursor:pointer;
+    color:#8ec8ff;
+    opacity:.85;
+    transition:.2s;
+}
+
+.mo-nav-menu-btn:hover {
+    opacity:1;
+    color:white;
+}
+
+.mo-nav-menu-btn.active {
+    opacity:.85;
+    color:white;
+}
+
+.mo-nav-account-mat {
+    --size:40px;
+
+    height:var(--size);
+    width:var(--size);
+    border-radius:50%;
+    cursor:pointer;
+    position:relative;
+}
+
+.mo-nav-account-mat > * {
+    height:100%;
+    width:100%;
+    border-radius:50%;
+    object-fit:cover;
+    object-position:center;
+}

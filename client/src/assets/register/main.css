@@ -1,0 +1,253 @@
+.rn-register {
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    position:relative;
+}
+
+.rn-register-bg {
+    height:100%;
+    width:100%;
+    object-fit:cover;
+    object-position:center;
+    z-index:0;
+    position:relative;
+    transform:scale(1.15);
+    filter:brightness(45%);
+}
+
+.rn-register-form {
+    --paddinglr:30px;
+    --paddingud:30px;
+
+    height:auto;
+    width:calc(400px - var(--paddinglr) * 2);
+    padding-left:var(--paddinglr);
+    padding-right:var(--paddinglr);
+    padding-top:var(--paddingud);
+    padding-bottom:var(--paddingud);
+    background:white;
+    box-shadow:0px 0px 5px 0px rgba(0, 0, 0, .3);
+    max-width:100%;
+    max-height:100%;
+    border-radius:3px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-right:50%;
+    transform:translate(-50%, -50%);
+    z-index:3;
+    transition:.4s;
+    overflow:hidden;
+}
+
+.rn-register-form-stage {
+    --time:.4s;
+    --delay:.4s;
+
+    height:100%;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    opacity:0;
+    visibility:hidden;
+    max-height:0;
+    transition:all var(--time) var(--delay), opacity var(--time), visibility 0s;
+}
+
+.rn-register-form[instage="LOGIN_STAGE"] > .rn-register-form-login,
+.rn-register-form[instage="REGISTER_STAGE"] > .rn-register-form-register {
+    transition:all var(--time) var(--delay), opacity var(--time) var(--delay), visibility 0s var(--delay);
+    opacity:1;
+    visibility:visible;
+}
+
+.rn-register-form[instage="LOGIN_STAGE"] > .rn-register-form-login {
+    max-height:360px;
+}
+
+.rn-register-form[instage="REGISTER_STAGE"] > .rn-register-form-register {
+    max-height:540px;
+}
+
+.rn-register-form-stage > * {
+    flex-shrink:0;
+}
+
+.rn-register-form-title {
+    font-family:"Roboto";
+    -webkit-font-smoothing:antialiased;
+    font-weight:500;
+    color:rgba(0, 0, 0, .7);
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    font-size:1.1em;
+    margin:0;
+    margin-bottom:15px;
+}
+
+.rn-register-form-err {
+    color:red;
+    margin-top:5px;
+    margin-bottom:5px;
+    animation:rn-register-form-err-init-am .25s;
+    opacity:0;
+    max-height:0;
+    transition:.45s;
+}
+
+.rn-register-form-err.visible {
+    opacity:1;
+    max-height:99px;
+}
+
+.rn-register-form-input {
+    --margin:10px;
+
+    height:50px;
+    width:100%;
+    background:transparent;
+    border:1px solid rgba(0, 0, 0, .2);
+    border-radius:3px;
+    margin-top:var(--margin);
+    margin-bottom:var(--margin);
+    display:flex;
+}
+
+.rn-register-form-input > * {
+    background:transparent;
+}
+
+.rn-register-form-input-image {
+    width:60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.25em;
+    color:rgba(0, 0, 0, .3);
+    overflow:hidden;
+}
+
+.rn-register-form-input-image:hover > svg {
+    animation:rn-register-input-image-hover-am .25s 1s ease-in-out;
+}
+
+@keyframes rn-register-input-image-hover-am {
+    0% {
+        transform:translateX(0);
+    }
+    50% {
+        transform:translateX(calc(30px + 100%));
+    }
+    50.0000001% {
+        transform:translateX(calc(-30px - 100%));
+    }
+    100% {
+        transform:translateX(0);
+    }
+}
+
+.rn-register-form-input-mat {
+    --padding:10px;
+
+    width:calc(100% - 60px - var(--padding));
+    color:rgba(0, 0, 0, .9);
+    position:relative;
+    font-size:1em;
+    padding-right:var(--padding);
+}
+
+.rn-register-form-subterms {
+    font-family:"Quicksand";
+    font-weight:400;
+    font-size:.85em;
+    color:rgba(0, 0, 0, .5);
+    margin-top:7.5px;
+    margin-bottom:20px;
+}
+
+.rn-register-form-subterms > * {
+    color:rgba(0, 0, 255, .65);
+    text-decoration:none;
+    font-family:"Arial";
+    cursor:pointer;
+}
+
+.rn-register-form-upload,
+.rn-register-form-submit {
+    width:100%;
+    background:#51AC53;
+    color:rgba(255, 255, 255, .95);
+    font-weight:600;
+    text-transform:uppercase;
+    cursor:pointer;
+    border-radius:3px;
+}
+
+.rn-register-form-upload {
+    --height:40px;
+
+    height:var(--height);
+    line-height:var(--height);
+    text-align:center;
+    font-size:.9em;
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+.rn-register-form-submit {
+    height:55px;
+    transition:.25s;
+    font-size:.975em;
+}
+
+.rn-register-form-submit:hover {
+    background:#65b367;
+}
+
+.rn-register-form-submit:active {
+    transition:.15s;
+    transform:scale(.95);
+    background:#5aa35c;
+}
+
+.rn-register-form-transition {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    margin-top:20px;
+    margin-bottom:7.5px;
+}
+
+.rn-register-form-transition-title {
+    font-family:"Quicksand";
+    font-size:.95em;
+    font-weight:500;
+    color:rgba(0, 0, 0, .85);
+}
+
+.rn-register-form-transition-btn {
+    --padding:10px;
+    --color:#3287AD;
+
+    height:37.5px;
+    cursor:pointer;
+    border-radius:3px;
+    width:120px;
+    line-height:36.25px;
+    font-weight:500;
+    text-transform:uppercase;
+    font-size:1em;
+    padding-left:var(--padding);
+    padding-right:var(--padding);
+    border:1px solid var(--color);
+    color:var(--color);
+    transition:.4s;
+}
+
+.rn-register-form-transition-btn:hover {
+    background:var(--color);
+    color:white;
+}
