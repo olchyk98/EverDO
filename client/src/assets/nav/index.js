@@ -12,13 +12,25 @@ import links from '../../links';
 
 class Button extends Component {
     render() {
-        if(!this.props.url) return null;
+        if(this.props.type === "LINK") {
+            if(!this.props.url) return null;
 
-        return(
-            <Link to={ this.props.url } className={ `mo-nav-menu-btn definp${ (!this.props.active) ? "" : " active" }` }>
-                { this.props.icon }
-            </Link>
-        );
+            return(
+                <Link to={ this.props.url } className={ `mo-nav-menu-btn definp${ (!this.props.active) ? "" : " active" }` }>
+                    { this.props.icon }
+                </Link>
+            );
+        } else if(this.props.type === "ACTION") {
+            if(!this.props.func) return null;
+
+            return(
+                <button className={ `mo-nav-menu-btn definp${ (!this.props.active) ? "" : " active" }` } onClick={ this.props.func }>
+                    { this.props.icon }
+                </button>
+            );
+        } else {
+            return null;
+        }
     }
 }
 
@@ -56,6 +68,11 @@ class App extends Component {
         });
     }
 
+    logout = () => {
+        cookieControl.delete("userdata");
+        window.location.href = links["REGISTER_PAGE"].absolute;
+    }
+
     render() {
         return(
             <div className="mo-nav">
@@ -65,23 +82,29 @@ class App extends Component {
                         [
                             {
                                 icon: <i className="fas fa-home" />,
-                                url: links["HOME_PAGE"].absolute
-                            },
-                            {
-                                icon: <i className="fas fa-trash" />
+                                url: links["HOME_PAGE"].absolute,
+                                type: "LINK",
+                                func: () => null
                             },
                             {
                                 icon: <i className="fas fa-cog" />,
-                                url: links["SETTINGS_PAGE"].absolute
+                                url: links["SETTINGS_PAGE"].absolute,
+                                type: "LINK",
+                                func: () => null
                             },
                             {
-                                icon: <i className="fas fa-door-closed" />
+                                icon: <i className="fas fa-door-closed" />,
+                                url: null,
+                                type: "ACTION",
+                                func: this.logout
                             }
-                        ].map(({ icon, url }, index) => (
+                        ].map(({ icon, url, func, type }, index) => (
                             <Button
                                 key={ index }
                                 icon={ icon }
                                 url={ url }
+                                type={ type }
+                                func={ func }
                                 active={ "/"+window.location.pathname.split("/")[1] === url }
                             />
                         ))

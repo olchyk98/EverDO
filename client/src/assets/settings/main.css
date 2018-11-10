@@ -73,9 +73,11 @@
 .rn-settings-input {
     --padding:15px;
     --margin:15px;
+    --h:40px;
+    --w:165px;
 
-    height:40px;
-    width:165px;
+    height:var(--h);
+    width:var(--w);
     border:1px solid rgba(0, 0, 0, .2);
     border-radius:45px;
     position:relative;
@@ -83,6 +85,16 @@
     padding-right:var(--padding);
     margin-top:var(--margin);
     margin-bottom:var(--margin);
+}
+
+.rn-settings-input.placeholder {
+    border:none;
+}
+
+.rn-settings-input.placeholder > img {
+    height:var(--h);
+    width:var(--w);
+    border-radius:45px;
 }
 
 .rn-settings-input.pass .rn-settings-input-mat {
@@ -177,4 +189,21 @@
 
     margin-left:var(--margin);
     margin-right:var(--margin);
+}
+
+.rn-settings-account-error {
+    --trans:.4s;
+
+    color:red;
+    font-family:"Quicksand";
+    font-weight:200;
+    opacity:0;
+    visibility:hidden;
+    transition:all var(--trans), visibility var(--trans);
+}
+
+.rn-settings-account-error.visible {
+    transition:all var(--trans), visibility 0s;
+    opacity:1;
+    visibility:visible;
 }

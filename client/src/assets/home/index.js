@@ -167,6 +167,14 @@ class Topics extends Component {
             <div className="rn-home-topics rn-home-screen">
                 <PlaceholderTopic />
                 <PlaceholderTopic />
+                <PlaceholderTopic />
+                <PlaceholderTopic />
+                <PlaceholderTopic />
+                <PlaceholderTopic />
+                <PlaceholderTopic />
+                <PlaceholderTopic />
+                <PlaceholderTopic />
+                <PlaceholderTopic />
             </div>
         );
 
@@ -1891,7 +1899,7 @@ class App extends Component {
             if(!data) {
                 return this.alertError();
             }
-        }).catch(console.log); // () => this.alertError()
+        }).catch(() => this.alertError());
     }
 
     createTopic = () => {

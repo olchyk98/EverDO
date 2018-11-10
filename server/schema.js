@@ -11,7 +11,7 @@ const {
 const { GraphQLUpload } = require('apollo-server');
 
 const fileSystem = require('fs');
-const textReader = require('textract');
+// const textReader = require('textract');
 
 const settings = require('./settings');
 
@@ -1269,6 +1269,39 @@ const RootMutation = new GraphQLObjectType({
                 }, { label });
                 
                 return (result) ? true:false;
+            }
+        },
+        updateUserData: {
+            type: UserType,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLID) },
+                authToken: { type: new GraphQLNonNull(GraphQLString) }, 
+                login: { type: new GraphQLNonNull(GraphQLString) },
+                password: { type: new GraphQLNonNull(GraphQLString) },
+                name: { type: new GraphQLNonNull(GraphQLString) },
+                avatar: { type: new GraphQLNonNull(GraphQLUpload) }
+            },
+            async resolve(_, { id, authToken, login, password, name, avatar }) {
+                // Validate account
+                let user = await validateAccount(id, authToken);
+                if(!user) return null;
+
+                
+                if(avatar) { // receive file
+                    var path = "";
+                    let { stream, filename } = await avatar;
+
+                    path = `${ settings.paths.avatars }${ generateNoise(128) }.${ getExtension(filename) }`;
+                    stream.pipe(fileSystem.createWriteStream('.' + path));
+                    if(!path) return null;
+                }
+
+                return user.updateOne({
+                    login: login || user.login,
+                    password: password || user.password,
+                    name: name || user.name,
+                    avatar: path || user.avatar
+                });
             }
         }
     }

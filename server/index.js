@@ -4,12 +4,12 @@ const { ApolloServer } = require('apollo-server-express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-// Final imports
+// Custom imports
 const schema = require('./schema');
 const app = express();
 
 // Database
-mongoose.connect("mongodb://oles:0password@ds227469.mlab.com:27469/graphql-everdo", {
+mongoose.connect("mongodb://<username>:<password>@ds123456.mlab.com:00000/db-section", {
     useNewUrlParser: true
 });
 mongoose.connection.once('open', () => console.log("Server was connected to database!"));
@@ -20,8 +20,7 @@ app.use('/files', express.static('./files'));
 
 // Server
 const server = new ApolloServer({
-    schema,
-    tracing: true
+    schema
 });
 
 // Apply middlewares

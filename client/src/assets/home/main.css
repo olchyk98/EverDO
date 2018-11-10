@@ -1730,8 +1730,8 @@
 }
 
 .rn-home-demonstration-image {
-    width:600px;
-    height:400px;
+    width:80vw;
+    max-height:90vh;
     object-fit:cover;
     object-position:center;
 }
